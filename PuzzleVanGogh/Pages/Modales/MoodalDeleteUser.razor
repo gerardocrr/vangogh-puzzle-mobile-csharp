@@ -1,0 +1,65 @@
+﻿@inject IJSRuntime JSRuntime
+
+<h4 class="mb-2">@title</h4>
+
+<h6 class="mb-5">@content1 "@_user.Username"? @content2.</h6>
+
+<div>
+    <button class="btn btn-danger" @onclick="Delete">@delete</button>
+    <button class="btn btn-dark" @onclick="Cancel">@cancel</button>
+</div>
+
+@code {
+    [Parameter] public PuzzleVanGogh.DB.Models.Users _user { get; set; }
+
+    string delete; string cancel; string title; string content1; string content2; string language;
+
+    UserController uc = new UserController();
+    LanguageController lc = new LanguageController();
+    [CascadingParameter] BlazoredModalInstance modalInstance { get; set; } = default!;
+    [CascadingParameter] IModalService Modal { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetLanguage();
+        Language();
+    }
+
+    private async Task Delete()
+    {
+        string user = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "user");
+        //Si el usuario es el mismo que tenemos en el local storage, limpiamos el local storage
+        if (_user.Username == user)
+        {
+            uc.DeleteUser(_user);
+            SetUserLS();
+            Close();
+        }
+        //Si no, solo eliminamos al usuario y dejamos igual el local storage
+        else
+        {
+            uc.DeleteUser(_user);
+            Close();
+        }
+    }
+
+    //Limpiamos el local storage dejandolo vacio, no lo eliminamos, solo lo limpiamos.
+    private async Task SetUserLS()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "user", "");
+    }
+
+    private async Task Close() => await modalInstance.CloseAsync();
+
+    private async Task Cancel() => await modalInstance.CancelAsync();
+
+    private void Language()
+    {
+        lc.ModalDelete(ref language, ref delete, ref cancel, ref title, ref content1, ref content2);
+    }
+
+    private async Task GetLanguage()
+    {
+        language = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "language");
+    }
+}

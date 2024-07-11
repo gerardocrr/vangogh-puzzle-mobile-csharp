@@ -1,0 +1,277 @@
+﻿@using System.Diagnostics;
+@using PuzzleVanGogh.Pages.Modales;
+@inject NavigationManager navigationManger
+@inject IJSRuntime JSRuntime
+
+@page "/starrynight"
+
+<div class="container text-center mt-5">
+    <h3 class="fw-bold">@timerLabel</h3>
+</div>
+
+<div class="center-div" style=@stylePrimary>
+    <div class="grid-container">
+        <div class="grid-item">
+            <img src=@path1 alt="Image 1" style=@style1 @onclick="Button1">
+        </div>
+        <div class="grid-item">
+            <img src=@path2 alt="Image 2" style=@style2 @onclick="Button2">
+        </div>
+        <div class="grid-item">
+            <img src=@path3 alt="Image 3" style=@style3 @onclick="Button3">
+        </div>
+        <div class="grid-item">
+            <img src=@path4 alt="Image 4" style=@style4 @onclick="Button4">
+        </div>
+        <div class="grid-item">
+            <img src=@path5 alt="Image 5" style=@style5 @onclick="Button5">
+        </div>
+        <div class="grid-item">
+            <img src=@path6 alt="Image 6" style=@style6 @onclick="Button6">
+        </div>
+        <div class="grid-item">
+            <img src=@path7 alt="Image 7" style=@style7 @onclick="Button7">
+        </div>
+        <div class="grid-item">
+            <img src=@path8 alt="Image 8" style=@style8 @onclick="Button8">
+        </div>
+        <div class="grid-item">
+            <img src=@path9 alt="Image 9" style=@style9 @onclick="Button9">
+        </div>
+    </div>
+</div>
+
+<div class="center-div" style=@styleSecondary>
+    <div class="grid-container">
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_1.webp" alt="Image 1" style=@style1 @onclick="Button1">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_2.webp" alt="Image 2" style=@style2 @onclick="Button2">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_3.webp" alt="Image 3" style=@style3 @onclick="Button3">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_4.webp" alt="Image 4" style=@style4 @onclick="Button4">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_5.webp" alt="Image 5" style=@style5 @onclick="Button5">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_6.webp" alt="Image 6" style=@style6 @onclick="Button6">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_7.webp" alt="Image 7" style=@style7 @onclick="Button7">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_8.webp" alt="Image 8" style=@style8 @onclick="Button8">
+        </div>
+        <div class="grid-item">
+            <img src="img/starry-night/starry-night_9.webp" alt="Image 9" style=@style9 @onclick="Button9">
+        </div>
+    </div>
+</div>
+
+<div class="container margin-btn">
+    <div class="row text-center">
+        <button class="btn btn-primary col m-2" @onclick="Start">@startText</button>
+        <button class="@resolveState col m-2" @onclick="Resolve">@resolveText</button>
+        <button class="@hintState col m-2" @ontouchstart="HintStart" @ontouchend="HintEnd">@hintText</button>
+        <button class="btn btn-info col m-2" @onclick="Scores">@scoresText</button>
+    </div>
+</div>
+
+@code {
+    string path1 = "img/starry-night/starry-night_1.webp"; string path2 = "img/starry-night/starry-night_2.webp"; string path3 = "img/starry-night/starry-night_3.webp"; string path4 = "img/starry-night/starry-night_4.webp"; string path5 = "img/starry-night/starry-night_5.webp"; string path6 = "img/starry-night/starry-night_6.webp"; string path7 = "img/starry-night/starry-night_7.webp"; string path8 = "img/starry-night/starry-night_8.webp"; string path9 = "img/starry-night/starry-night_9.webp";
+    string style1 = "pointer-events: none; border-radius: 10px 0 0 0;"; string style2 = "pointer-events: none;"; string style3 = "pointer-events: none; border-radius: 0 10px 0 0;"; string style4 = "pointer-events: none;"; string style5 = "pointer-events: none;"; string style6 = "pointer-events: none;"; string style7 = "pointer-events: none; border-radius: 0 0 0 10px;"; string style8 = "pointer-events: none;"; string style9 = "pointer-events: none; border-radius: 0 0 10px 0;";
+    string stylePrimary = ""; string styleSecondary = "display: none";
+    string startText; string restartText; string resolveText; string hintText; string scoresText; string language; string user;
+    string resolveState = "btn btn-success disabled";
+    string hintState = "btn btn-warning disabled";
+    private UserController uc = new UserController();
+    private LanguageController lac = new LanguageController();
+    private LevelController lc = new LevelController();
+
+    private Stopwatch stopwatch;
+    private string timerLabel = "0:00:00";
+    
+    [CascadingParameter] IModalService Modal { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReadLocalStorage();
+        await GetLanguage();
+        Language();
+    }
+
+    private void Start()
+    {
+        lc.ShuffleStarryNight(ref path1, ref path2, ref path3, ref path4, ref path5, ref path6, ref path7, ref path8, ref path9);
+        style1 = "border-radius: 10px 0 0 0;"; style2 = ""; style3 = "border-radius: 0 10px 0 0;"; style4 = ""; style5 = ""; style6 = ""; style7 = "border-radius: 0 0 0 10px;"; style8 = ""; style9 = "border-radius: 0 0 10px 0;"; resolveState = "btn btn-success"; hintState = "btn btn-warning";
+        startText = restartText;
+        StartTimer();
+    }
+
+    private void Resolve()
+    {
+        path1 = "img/starry-night/starry-night_1.webp"; path2 = "img/starry-night/starry-night_2.webp"; path3 = "img/starry-night/starry-night_3.webp"; path4 = "img/starry-night/starry-night_4.webp"; path5 = "img/starry-night/starry-night_5.webp"; path6 = "img/starry-night/starry-night_6.webp"; path7 = "img/starry-night/starry-night_7.webp"; path8 = "img/starry-night/starry-night_8.webp"; path9 = "img/starry-night/starry-night_9.webp";
+        Language();
+        resolveState = "btn btn-success disabled"; hintState = "btn btn-warning disabled";
+        StopTimer();
+    }
+
+    private void HintStart()
+    {
+        stylePrimary = "display: none";
+        styleSecondary = "";
+    }
+
+    private void HintEnd()
+    {
+        stylePrimary = "";
+        styleSecondary = "display: none";
+    }
+
+    private void Win()
+    {
+        if (path1 == "img/starry-night/starry-night_1.webp" && path2 == "img/starry-night/starry-night_2.webp" && path3 == "img/starry-night/starry-night_3.webp" && path4 == "img/starry-night/starry-night_4.webp" && path5 == "img/starry-night/starry-night_5.webp" && path6 == "img/starry-night/starry-night_6.webp" && path7 == "img/starry-night/starry-night_7.webp" && path8 == "img/starry-night/starry-night_8.webp" && path9 == "img/black.webp")
+        {
+            if (uc.GetTime("TimeStarryNight", user) == "")
+            {
+                Resolve();
+                ModalBestTime(timerLabel);
+                uc.UpdateTime("TimeStarryNight", timerLabel, user);
+            }
+            else if (uc.ParseTime(uc.GetTime("TimeStarryNight", user)) > uc.ParseTime(timerLabel))
+            {
+                Resolve();
+                ModalBestTime(timerLabel);
+                uc.UpdateTime("TimeStarryNight", timerLabel, user);
+            }
+            else
+            {
+                Resolve();
+                ModalWin(timerLabel);
+            }
+        }
+    }
+
+    private void Scores()
+    {
+        var level = new ModalParameters().Add(nameof(Modales.ModalScores.level), "TimeStarryNight");
+        Modal.Show<Modales.ModalScores>("", level);
+    }
+
+    private void ModalWin(string time)
+    {
+        var parameters1 = new ModalParameters().Add(nameof(Pages.Modales.ModalWin.time), time);
+        Modal.Show<ModalWin>("", parameters1);
+    }
+
+    private void ModalBestTime(string time)
+    {
+        var parameters1 = new ModalParameters().Add(nameof(Pages.Modales.ModalWin.time), time);
+        Modal.Show<ModalBestTime>("", parameters1);
+    }
+
+    private void Button1()
+    {
+        lc.TwoImages(ref path1, ref path2, ref path4);
+        Win();
+    }
+
+    private void Button2()
+    {
+        lc.ThreeImages(ref path2, ref path1, ref path3, ref path5);
+        Win();
+    }
+
+    private void Button3()
+    {
+        lc.TwoImages(ref path3, ref path2, ref path6);
+        Win();
+    }
+
+    private void Button4()
+    {
+        lc.ThreeImages(ref path4, ref path1, ref path5, ref path7);
+        Win();
+    }
+
+    private void Button5()
+    {
+        lc.FourImages(ref path5, ref path2, ref path4, ref path6, ref path8);
+        Win();
+    }
+
+    private void Button6()
+    {
+        lc.ThreeImages(ref path6, ref path3, ref path5, ref path9);
+        Win();
+    }
+
+    private void Button7()
+    {
+        lc.TwoImages(ref path7, ref path4, ref path8);
+        Win();
+    }
+
+    private void Button8()
+    {
+        lc.ThreeImages(ref path8, ref path5, ref path7, ref path9);
+        Win();
+    }
+
+    private void Button9()
+    {
+        lc.TwoImages(ref path9, ref path6, ref path8);
+        Win();
+    }
+
+    private async Task StartTimer()
+    {
+        stopwatch = Stopwatch.StartNew();
+        await UpdateCounter();
+    }
+
+    private async Task UpdateCounter()
+    {
+        while (true)
+        {
+            TimeSpan elapsed = stopwatch.Elapsed;
+            timerLabel = FormatTimeSpan(elapsed);
+            StateHasChanged();
+
+            await Task.Delay(100);
+            await InvokeAsync(() => { });
+        }
+    }
+
+    private string FormatTimeSpan(TimeSpan timeSpan)
+    {
+        string formattedTime = $"{timeSpan.Minutes}:{timeSpan.Seconds.ToString().PadLeft(2, '0')}:{(timeSpan.Milliseconds / 10).ToString().PadLeft(2, '0')}";
+        return formattedTime;
+    }
+
+    private void StopTimer()
+    {
+        stopwatch.Stop(); // Detiene el temporizador
+        stopwatch.Reset();
+    }    
+
+    private void Language()
+    {
+        lac.LanguageButtons(ref language, ref startText, ref resolveText, ref hintText, ref scoresText, ref restartText);
+    }
+
+    private async Task GetLanguage()
+    {
+        language = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "language");
+    }
+
+    private async Task ReadLocalStorage()
+    {
+        user = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "user");
+    }    
+}

@@ -1,0 +1,39 @@
+﻿@inject IJSRuntime JSRuntime
+
+<h4 class="mb-3">@title</h4>
+
+<label class="mb-2">@content1: @time @seconds.</label>
+<label class="mb-3">@content2?</label>
+
+<div class="text-center">
+    <button class="btn btn-primary" @onclick="Close">@accept</button>
+</div>
+
+
+@code {
+    [Parameter] public string time { get; set; }
+
+    string title; string content1; string content2; string accept; string seconds; string language;
+
+    LanguageController lc = new LanguageController();
+    [CascadingParameter] BlazoredModalInstance modalInstance { get; set; } = default!;
+    [CascadingParameter] IModalService Modal { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetLanguage();
+        Language();
+    }
+
+    private void Language()
+    {
+        lc.ModalWin(ref language, ref title, ref content1, ref content2, ref accept, ref seconds);
+    }
+
+    private async Task GetLanguage()
+    {
+        language = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "language");
+    }
+
+    private async Task Close() => await modalInstance.CloseAsync();
+}

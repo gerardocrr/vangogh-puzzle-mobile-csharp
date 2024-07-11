@@ -1,0 +1,33 @@
+﻿@using Data.Controllers;
+@inject IJSRuntime JSRuntime
+
+<h4 class="mb-2">Change user</h4>
+
+<h6 class="mb-5">Are you sure to cahnge the user "@_user.Username"? All your data will be saved in this user.</h6>
+
+<div>
+    <button class="btn btn-primary" @onclick="ChangeUser">Confirm</button>
+    <button class="btn btn-danger" @onclick="Cancel">Cancel</button>
+</div>
+
+@code {
+    [Parameter] public PuzzleVanGogh.DB.Models.Users _user { get; set; }
+
+    UserController uc = new UserController();
+    [CascadingParameter] BlazoredModalInstance modalInstance { get; set; } = default!;
+    [CascadingParameter] IModalService Modal { get; set; } = default!;
+
+    private void ChangeUser()
+    {
+        SetUserLS();
+        Close();
+    }
+    private async Task Close() => await modalInstance.CloseAsync();
+
+    private async Task Cancel() => await modalInstance.CancelAsync();
+
+    private async Task SetUserLS()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "user", _user.Username);
+    }
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+	<title>PuzzleVanGogh</title>
+	<base href="/" />
+	<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+	<link href="css/app.css" rel="stylesheet" />
+	<link href="PuzzleVanGogh.styles.css" rel="stylesheet" />
+	<style>
+		body {
+			background-size: cover;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="status-bar-safe-area"></div>
+
+	<div id="app">
+		<div class="loading-page">
+			<div class="dot-spinner">
+				<div class="dot-spinner__dot"></div>
+				<div class="dot-spinner__dot"></div>
+				<div class="dot-spinner__dot"></div>
+				<div class="dot-spinner__dot"></div>
+				<div class="dot-spinner__dot"></div>
+				<div class="dot-spinner__dot"></div>
+				<div class="dot-spinner__dot"></div>
+				<div class="dot-spinner__dot"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="blazor-error-ui">
+		An unhandled error has occurred.
+		<a href="" class="reload">Reload</a>
+		<a class="dismiss">🗙</a>
+	</div>
+
+	<script src="_framework/blazor.webview.js" autostart="false"></script>
+	<script src="css/bootstrap/bootstrap.bundle.min.js"></script>
+
+	<!--Cambiar la imagen cada vez que inicia el app-->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const images = [
+				"img/background1.webp",
+				"img/background2.webp",
+				"img/background3.webp",
+				"img/background4.webp",
+				"img/background5.webp",
+                "img/background6.webp",
+			];
+
+			function getRandomImage() {
+				const randomIndex = Math.floor(Math.random() * images.length);
+				return images[randomIndex];
+			}
+
+			function setRandomBackground() {
+				const randomImage = getRandomImage();
+				document.body.style.backgroundImage = `url("${randomImage}")`;
+			}
+
+			//Cambiar la imagen de fondo al cargar la página
+			setRandomBackground();
+		});
+	</script>
+
+</body>
+
+</html>

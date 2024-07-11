@@ -1,0 +1,134 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0-ios;net6.0-maccatalyst;net6.0-android33.0</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net6.0-tizen</TargetFrameworks> -->
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PuzzleVanGogh</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <EnableDefaultCssItems>false</EnableDefaultCssItems>
+
+        <!-- Display name -->
+        <ApplicationTitle>PuzzleVanGogh</ApplicationTitle>
+
+        <!-- App Identifier -->
+        <ApplicationId>com.companyname.puzzlevangogh</ApplicationId>
+        <ApplicationIdGuid>D96DA2FC-4A01-42B6-BECC-68B04C9C3E59</ApplicationIdGuid>
+
+        <!-- Versions -->
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <AndroidUseAapt2>True</AndroidUseAapt2>
+      <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+      <AndroidPackageFormat>aab</AndroidPackageFormat>
+      <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-ios|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-maccatalyst|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows10.0.19041.0|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-ios|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-maccatalyst|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-windows10.0.19041.0|AnyCPU'">
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android33.0|AnyCPU'">
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <AndroidUseAapt2>True</AndroidUseAapt2>
+      <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+      <AndroidPackageFormat>aab</AndroidPackageFormat>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android33.0|AnyCPU'">
+      <ApplicationVersion>3</ApplicationVersion>
+      <ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+      <AndroidPackageFormat>aab</AndroidPackageFormat>
+      <ApplicationTitle>Van Gogh's Puzzles</ApplicationTitle>
+      <AndroidUseAapt2>True</AndroidUseAapt2>
+      <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#02A7A7" />
+
+        <!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#02A7A7" BaseSize="128,128" />
+
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*" />
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\lang\en\translations.json">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Content>
+      <Content Update="wwwroot\lang\es\translations.json">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+      <PackageReference Include="Blazored.Toast" Version="4.1.0" />
+      <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+      <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.5" />
+    </ItemGroup>
+
+</Project>

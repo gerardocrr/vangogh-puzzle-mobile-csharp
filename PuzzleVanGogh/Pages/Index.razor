@@ -1,0 +1,102 @@
+﻿@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
+@inject IToastService toastService
+
+@page "/"
+
+<style>
+    .center-div {
+        display: grid;
+        place-content: center;
+        height: 90vh;
+    }    
+</style>
+
+<div class="center-div">
+    <label class="mb-2">@lblusername:</label>
+    <input type="text" id="name" class="@colorName mb-5" @bind="inputUsername" />
+    <button class="btn btn-primary" @onclick="CreateUser">@lblaccept</button>
+</div>
+
+<div>
+    <button class="btn btn-primary" @onclick="LanguageEN">EN</button>
+    <button class="btn btn-dark" @onclick="LanguageES">ES</button>
+</div>
+
+
+@code {
+    private string lblusername = "Username";
+    private string lblaccept = "Accept";
+    private string inputUsername = "";
+    private UserController uc = new UserController();
+    private LanguageController lc = new LanguageController();
+    private List<DB.Models.Users> users;
+    string colorName = "form-control";
+    string toast1 = "The field cannot be empty.";
+    string language;
+
+    protected override async void OnInitialized()
+    {
+        users = uc.GetUsers();
+        await GetLanguage();
+        if (users.Count > 0)
+        {
+            navigationManager.NavigateTo("/levels");
+        }
+        if (language == null)
+        {
+            SetLanguageEN();
+        }
+    }    
+
+    private void CreateUser()
+    {
+        //Validar que el usuario no sea en blanco
+        if (inputUsername.Length == 0 || string.IsNullOrWhiteSpace(inputUsername))
+        {
+            toastService.ShowError(toast1, null);
+            colorName = "form-control border-danger";
+            inputUsername = "";
+        }
+        //Si no esta en blanco guardamos el usuario
+        else
+        {
+            var newUser = new DB.Models.Users { Username = inputUsername };
+            uc.CreateUser(newUser);
+            SetUserLS();
+            navigationManager.NavigateTo("/levels");
+        }
+    }
+
+    private void LanguageES()
+    {
+        lc.LanguageIndex("es", ref lblusername, ref lblaccept, ref toast1);
+        SetLanguageES();
+    }
+
+    private void LanguageEN()
+    {
+        lc.LanguageIndex("en", ref lblusername, ref lblaccept, ref toast1);
+        SetLanguageEN();
+    }
+
+    private async Task SetUserLS()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "user", inputUsername);
+    }
+
+    private async Task SetLanguageEN()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "language", "en");
+    }
+
+    private async Task SetLanguageES()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "language", "es");
+    }
+
+    private async Task GetLanguage()
+    {
+        language = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "language");
+    }
+}

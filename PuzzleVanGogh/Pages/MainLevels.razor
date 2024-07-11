@@ -1,0 +1,128 @@
+﻿@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
+
+@page "/levels"
+
+<div class="text-end mb-3">
+    <svg @onclick="UserSettings" width="30px" height="30px" class="text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 19">
+        <path d="M7.324 9.917A2.479 2.479 0 0 1 7.99 7.7l.71-.71a2.484 2.484 0 0 1 2.222-.688 4.538 4.538 0 1 0-3.6 3.615h.002ZM7.99 18.3a2.5 2.5 0 0 1-.6-2.564A2.5 2.5 0 0 1 6 13.5v-1c.005-.544.19-1.072.526-1.5H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h7.687l-.697-.7ZM19.5 12h-1.12a4.441 4.441 0 0 0-.579-1.387l.8-.795a.5.5 0 0 0 0-.707l-.707-.707a.5.5 0 0 0-.707 0l-.795.8A4.443 4.443 0 0 0 15 8.62V7.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.12c-.492.113-.96.309-1.387.579l-.795-.795a.5.5 0 0 0-.707 0l-.707.707a.5.5 0 0 0 0 .707l.8.8c-.272.424-.47.891-.584 1.382H8.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1.12c.113.492.309.96.579 1.387l-.795.795a.5.5 0 0 0 0 .707l.707.707a.5.5 0 0 0 .707 0l.8-.8c.424.272.892.47 1.382.584v1.12a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1.12c.492-.113.96-.309 1.387-.579l.795.8a.5.5 0 0 0 .707 0l.707-.707a.5.5 0 0 0 0-.707l-.8-.795c.273-.427.47-.898.584-1.392h1.12a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5ZM14 15.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z" />
+    </svg> <br />
+    <label>@user</label>
+</div>
+
+<h3 class="text-center mb-3">@levels</h3>
+
+<div class="center-div text-center">
+    <div class="row mb-2">
+        <div class="col">
+            <img class="imgLevels" src="img/levels/starry-night.webp" width="150px" height="150px" @onclick="StarryNight" />
+        </div>
+        <div class="col">
+            <img class="imgLevels" src="img/levels/self-portrait.webp" width="150px" height="150px" @onclick="SelfPortrait" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col">
+            <img class="imgLevels" src="img/levels/almond-blossom.webp" width="150px" height="150px" @onclick="AlmondBlossom" />
+        </div>
+        <div class="col">
+            <img class="imgLevels" src="img/levels/round-prisoners.webp" width="150px" height="150px" @onclick="RoundPrisoners" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col">
+            <img class="imgLevels" src="img/levels/skeleton-head.webp" width="150px" height="150px" @onclick="SkeletonHead" />
+        </div>
+        <div class="col">
+            <img class="imgLevels" src="img/levels/potato-eaters.webp" width="150px" height="150px" @onclick="PotatoEaters" />
+        </div>
+    </div>
+</div>
+
+@code {
+    string user;
+    string levels;
+    string language;
+    private LanguageController lc = new LanguageController();
+    [CascadingParameter] IModalService Modal { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReadLocalStorage();
+        await GetLanguage();
+        Language();
+    }
+
+    private async Task UserSettings()
+    {
+        var settingsUser = Modal.Show<Modales.ModalUserSettings>();
+        var result = await settingsUser.Result;
+
+        if (result.Confirmed)
+        {
+            await ReadLocalStorage();
+            await GetLanguage();
+            Language();
+        }
+    }
+
+    private void StarryNight()
+    {
+        VerifyUser("/starrynight");
+    }
+
+    private void SelfPortrait()
+    {
+        VerifyUser("/selfportrait");
+    }
+
+    private void AlmondBlossom()
+    {
+        VerifyUser("/almondblossom");
+    }
+
+    private void RoundPrisoners()
+    {
+        VerifyUser("/roundprisoners");
+    }
+
+    private void SkeletonHead()
+    {
+        VerifyUser("/skeletonhead");
+    }
+
+    private void PotatoEaters()
+    {
+        VerifyUser("/potatoeaters");
+    }
+
+    //Verificar que exista un usuario en el local storage
+    private void VerifyUser(string url)
+    {
+        //Si no ha elegido un usuario donde guardar sus datos, le enviamos una notificacion
+        if (user == "")
+        {
+            Modal.Show<Modales.ModalNotification>();
+        }
+        //Si ya lo eligio, lo enviamos al niivel seleccionado
+        else
+        {
+            navigationManager.NavigateTo(url);
+        }
+    }
+
+    private void Language()
+    {
+        lc.LanguageMainLevels(ref language, ref levels);
+    }
+
+    private async Task ReadLocalStorage()
+    {
+        user = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "user");
+    }
+
+    private async Task GetLanguage()
+    {
+        language = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "language");
+    }
+}
